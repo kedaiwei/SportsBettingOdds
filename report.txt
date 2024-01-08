@@ -1,0 +1,55 @@
+Vision: Our current vision for the final product is to be able to web scrape
+from several different betting websites and perform calculations in order to 
+compare odds for sporting events across different sites. Ultimately, we intend 
+for our final presentable calculation to be an arbitrage calculation between 
+betting sites. Essentially, an arbitrage is when we observe odds that are 
+different by an amount where we could bet in such a way that we’re guaranteed to 
+make a profit. After doing the work for MS2 and the upcoming demo, we have decided 
+to look for alternative ways to webscrape other than using Selenium, and have a 
+much better idea of how we’d like to process web-scraped data in OCaml. These 
+last two are not necessarily big changes, but they are certainly refined ideas 
+on how to actually put our project idea into practice. 
+
+Summary of progress: When we met for MS1, our group did not have a concrete 
+vision of our implementation yet. Since then, our group has investigated how to 
+use hard-coded Selenium web scraping through Python and produced a data file for
+one website. We have also started writing the UI for the program. When the 
+executable is called, it greets the user and asks whether or not the user has a 
+Mac or PC. It then calls our web scraping program written in Python. Currently, 
+our user interface prints out the scraped data. We also have mathematical 
+functions in the works to transform these odds into more useful numbers to 
+present to the reader, but the more interactive interface will take a little 
+more time and unfortunately won’t be in the MS2 demo. 
+
+Activity Breakdown (everyone contributed towards drafting this report): 
+Jan: 
+- Created web scraping script which returns data from a betting website and outputs a JSON file
+- Helped debug main.ml file for it to run on Windows and Mac devices
+- Spent ~8 hours
+Gia:
+- Created the translate.ml file which translates the JSON file into OCaml
+- Created the translate.mli file which complements the translate.ml file
+- Spent ~8 hours
+Katie:
+- Created the main executable file
+- Parsed user input to call the correct command which calls the web scraping program.
+- Wrote install file
+- Spent ~8 hours
+Jeffery: 
+- Wrote functions to calculate and transform different odds. 
+- Take the output of from_json and print it for the user in the terminal. 
+- Helped brainstorm data types for translate.ml
+- Spent ~8 hours
+
+Productivity analysis: We produced what we expected for MS2. There was a lot of 
+research as none of us were familiar with web scraping and we also had to decide 
+how to translate between Python and OCaml. We wanted to output betting odds from 
+one betting site. This required one file to communicate with the user, one file 
+to gather the information from the betting site, one to translate the betting 
+odds back to OCaml, and another to output the information back to the user with 
+the odds. We split each file between ourselves by delegating who was best at 
+what. Each file was dependent on the file beforehand which required us to work 
+quickly to give each other team member ample time to work. These were reasonable 
+expectations for us, as it was challenging but doable.
+
+

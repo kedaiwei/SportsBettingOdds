@@ -1,0 +1,5 @@
+(library
+ (name oddsmath)
+ (public_name OddsCalc)
+ (libraries yojson str ANSITerminal)
+ (modules Calc Translate Printer Command Help))

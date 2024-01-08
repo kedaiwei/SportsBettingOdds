@@ -1,0 +1,33 @@
+---
+# Members of your group.
+group:
+  - name: Katie Wei
+    netid: kw462
+  - name: Gia Ramos
+    netid: gmr75
+  - name: Jeffery Cai
+    netid: jc2565
+  - name: Jan Bobrowski
+    netid: jhb344
+# Your PM.
+pm:
+  name: Anirudh Sharma
+  netid: as2844
+# Set to false if you don't want your gallery entry to be public.
+publish: true
+# Pithy title
+title: "Sports Betting Odds Aggregator"
+# OK if this is a Cornell Github link, but public gallery viewers won't be able to see it.
+git-repo: "https://github.coecis.cornell.edu/jc2565/cs3110-final-project/commits/main"
+# If you have no demo screencast, replace the url string with an empty string ""
+demo-video-url: ""
+# Write a short, attention-grabbing description of your project.
+desc: >
+  Our project seeks to query several sports betting websites and collect
+  information about pre-game odds, which will be synthesized to produce an
+  easily digestible table of helpful details for the user. The program would
+  ask which site the user would like to query, then output a nicely formatted
+  table including odds, chances of winning, and what the net gain/loss would be
+  if the user bet on each option.
+
+  Starting the program will also remind the user to gamble responsibly.

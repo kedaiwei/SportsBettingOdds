@@ -1,0 +1,8 @@
+1. Install python3 through https://www.python.org/downloads/
+2. Install requests using "pip install requests" in the terminal
+3. Install Beautifulsoup4 using "pip install beautifulsoup4" in the terminal  
+4. Install pandas using "pip install pandas" in the terminal
+https://pandas.pydata.org/docs/getting_started/install.html
+6. To run the program, change directory until you reach /OddsCalc
+7. Run "dune build" to build the program
+8. Run "dune exec OddsCalc" to execute the program
