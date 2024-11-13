@@ -63,28 +63,33 @@ let teams_printer (i : int * (string * string)) =
 let site_printer site =
   ANSITerminal.printf [ on_red; white; ANSITerminal.Bold ] "on %s\n" site
 
+let league_printer leag =
+  ANSITerminal.printf [ on_red; white; ANSITerminal.Bold ] "in %s " leag
+
 (*Does the same thing as List.iter but with three lists.*)
-let rec my_iter3 f lst1 lst2 lst3 =
-  match (lst1, lst2, lst3) with
-  | h1 :: t1, h2 :: t2, h3 :: t3 ->
-      f h1 h2 h3;
-      my_iter3 f t1 t2 t3
-  | [], [], [] -> ()
+let rec my_iter4 f lst1 lst2 lst3 lst4 =
+  match (lst1, lst2, lst3, lst4) with
+  | h1 :: t1, h2 :: t2, h3 :: t3, h4 :: t4 ->
+      f h1 h2 h3 h4;
+      my_iter4 f t1 t2 t3 t4
+  | [], [], [], [] -> ()
   | _ -> raise (Invalid_argument "lists have different lengths")
 
 let print_table (t : Translate.t) =
-  my_iter3
-    (fun matchup site odds ->
+  my_iter4
+    (fun league matchup site odds ->
       teams_printer matchup;
+      league_printer league;
       site_printer site;
       table_odds_printer odds)
+    (t.league |> List.split |> snd)
     t.game
     (t.site |> List.split |> snd)
     (t.odds |> List.split |> snd)
 
 (************** Helper functions to print out a Calc.t ******************)
-let matchup_helper (m : string * string) =
-  let t1, t2 = m in
+let matchup_helper ((t1, t2) : string * string) =
+  let t1, t2 = (String.uppercase_ascii t1, String.uppercase_ascii t2) in
   ANSITerminal.printf
     [ on_white; black; ANSITerminal.Bold ]
     "For the matchup %s vs. %s, " t1 t2
@@ -95,14 +100,16 @@ let outcome_helper (o : string) =
       [ on_white; black; ANSITerminal.Bold ]
       "the match being drawn "
   else
+    let o = String.uppercase_ascii o in
     ANSITerminal.printf [ on_white; black; ANSITerminal.Bold ] "%s winning " o
 
 let prob_helper (p : float) =
   ANSITerminal.printf
     [ on_white; black; ANSITerminal.Bold ]
-    "has a projected %f percent chance of occurring " p
+    "has a projected %.2f percent chance of occurring " p
 
 let site_helper (s : string) =
+  let s = String.uppercase_ascii s in
   ANSITerminal.printf
     [ on_white; black; ANSITerminal.Bold ]
     "by the odds listed on site %s.\n" s
@@ -112,7 +119,7 @@ let bet_helper (b : float option) =
   | Some f ->
       ANSITerminal.printf
         [ on_white; black; ANSITerminal.Bold ]
-        "If you placed a bet of %f on this outcome," f
+        "If you placed a bet of %.2f on this outcome, " f
   | None -> ()
 
 let payout_helper (p : float option) =
@@ -120,7 +127,7 @@ let payout_helper (p : float option) =
   | Some f ->
       ANSITerminal.printf
         [ on_white; black; ANSITerminal.Bold ]
-        "you would receive %f upon winning." f
+        "you would receive %.2f upon winning.\n" f
   | None -> ()
 
 (************end Helper functions to print out a Calc.t ******************)
@@ -185,7 +192,7 @@ let print_matchup (t : Translate.t) (league : string) (format : string)
   | _ -> raise Notfound
 
 let matchup_comp (_, (t1, t2)) (_, (t3, t4)) =
-  String.compare t1 t3 + String.compare t2 t4
+  (20 * String.compare t1 t3) + (478 * String.compare t2 t4)
 
 (* Prints all matchups in [matchup_lst]*)
 let print_matchup_lst_helper matchup_lst =
@@ -197,3 +204,31 @@ let print_matchup_lst_helper matchup_lst =
 let print_matchup_lst (t : Translate.t) (leag : string) =
   let new_t = Calc.league_from_t leag t in
   print_matchup_lst_helper (List.sort_uniq matchup_comp new_t.game)
+
+let arb_2way_printer (two : (Calc.t * Calc.t) list) =
+  if two = [] then
+    emphasize "There are no arbitrageable two-way games in the data."
+  else
+    List.fold_left
+      (fun acc (f, s) ->
+        calc_printer f;
+        calc_printer s)
+      () two
+
+let arb_3way_printer (three : (Calc.t * Calc.t * Calc.t) list) =
+  if three = [] then
+    emphasize "There are no arbitrageable three-way games in the data."
+  else
+    List.fold_left
+      (fun acc (f, s, t) ->
+        calc_printer f;
+        calc_printer s;
+        calc_printer t)
+      () three
+
+let arb_printer (t : (Calc.t * Calc.t) list * (Calc.t * Calc.t * Calc.t) list) =
+  let two, three = (fst t, snd t) in
+  arb_2way_printer two;
+  emphasize "\n";
+  arb_3way_printer three;
+  emphasize "\n"

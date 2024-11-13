@@ -1,3 +1,6 @@
+open Yojson
+open Yojson.Basic.Util
+
 type t = {
   league : (int * string) list;
   game : (int * (string * string)) list;
@@ -5,10 +8,8 @@ type t = {
   odds : (int * float list option) list;
 }
 
-open Yojson.Basic.Util
-
 (* Helper Function which removes the outer layer Assoc from the JSON file*)
-let removeOuterLayer j = j |> to_assoc
+let remove_outer_layer j = j |> to_assoc
 
 (*Convert the first element of a pair list into ints, which will create
   indices*)
@@ -23,7 +24,7 @@ let get_league_listList f = f |> List.assoc "League" |> to_assoc
 
 (* Returns a list of all the games *)
 let combine_league_func json =
-  json |> removeOuterLayer |> get_league_listList |> json_string_to_string
+  json |> remove_outer_layer |> get_league_listList |> json_string_to_string
   |> convert_indices
 
 (*Gets the column with title Game and turns it into an OCaml association list.
@@ -40,7 +41,7 @@ let split_team_name str =
 
 (* Returns a list of all the games *)
 let combine_game_func json =
-  json |> removeOuterLayer |> get_game_list |> json_string_to_string
+  json |> remove_outer_layer |> get_game_list |> json_string_to_string
   |> convert_indices
   |> List.map (fun (a, b) -> (a, split_team_name b))
 
@@ -50,7 +51,7 @@ let get_site_list f = f |> List.assoc "Site" |> to_assoc
 
 (* Returns a list of all the sites*)
 let combine_site_funcs json =
-  json |> removeOuterLayer |> get_site_list |> json_string_to_string
+  json |> remove_outer_layer |> get_site_list |> json_string_to_string
   |> convert_indices
 
 (*Gets the column with title Odds and turns it into an OCaml association list.
@@ -86,7 +87,7 @@ let convert_odds_to_float_op_list syl =
 
 (* Returns a list of all the Odds*)
 let combine_odds_func json =
-  json |> removeOuterLayer |> get_odds_list |> convert_odds_to_float_op_list
+  json |> remove_outer_layer |> get_odds_list |> convert_odds_to_float_op_list
   |> convert_indices
 
 let from_json j =

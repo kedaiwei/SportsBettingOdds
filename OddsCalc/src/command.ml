@@ -27,11 +27,12 @@ type help_category =
 
 type command =
   | Calculate of object_phrase
+  | Bet of float * object_phrase
   | Print of format * object_phrase
-  | Arbitrage
+  | Arbitrage of float
   | Goto of league
   | Helpwith of help_category
-  | Underdog
+  | Riskiest
   | Closest
   | MatchupList
   | Help
@@ -82,6 +83,11 @@ let match_help_type str =
   | "probability" -> ProbabilityExpl
   | _ -> raise Malformed
 
+(*[match_bet_float f] is a helper function to call in the pattern match of
+  parse, attempting to change [f] from a string to a float. Raises: Malformed if
+  the string cannot be turned into a float.*)
+let match_float f = try float_of_string f with _ -> raise Malformed
+
 let parse str =
   str |> String.lowercase_ascii |> String.split_on_char ' '
   |> List.filter (fun x -> x <> String.empty)
@@ -89,11 +95,13 @@ let parse str =
   | [] -> raise Empty
   | [ h ] when h = "calculate" -> raise Malformed
   | [ h ] when h = "print" -> raise Malformed
+  | [ h ] when h = "bet" -> raise Malformed
+  | [ h ] when h = "arbitrage" -> raise Malformed
   | [ h ] when h = "help" -> Help
   | [ h ] when h = "start" -> Start
   | [ h ] when h = "home" -> Home
   | [ h ] when h = "quit" -> Quit
-  | [ h ] when h = "underdog" -> Underdog
+  | [ h ] when h = "riskiest" -> Riskiest
   | [ h ] when h = "closest" -> Closest
   | [ h1; h2 ] when h1 = "go" && h2 = "to" -> raise Malformed
   | [ h1; h2 ] when h1 = "matchup" && h2 = "list" -> MatchupList
@@ -103,13 +111,14 @@ let parse str =
       Goto (match_league [ leaguew1; leaguew2 ])
   | [ verb1; verb2; helptype ] when verb1 = "help" && verb2 = "with" ->
       Helpwith (match_help_type helptype)
+  | [ verb; f ] when verb = "arbitrage" -> Arbitrage (match_float f)
   | verb :: t when verb = "quit" && t <> [] -> raise Malformed
   | verb :: t when verb = "home" && t <> [] -> raise Malformed
   | verb :: t when verb = "start" && t <> [] -> raise Malformed
-  | verb :: t when verb = "arbitrage" && t <> [] -> raise Malformed
   | verb :: t when verb = "help" && t <> [] -> raise Malformed
-  | verb :: t when verb = "underdog" && t <> [] -> raise Malformed
+  | verb :: t when verb = "riskiest" && t <> [] -> raise Malformed
   | verb :: t when verb = "closest" && t <> [] -> raise Malformed
   | verb :: t when verb = "calculate" -> Calculate t
   | verb :: spec :: t when verb = "print" -> Print (match_format spec, t)
+  | verb :: f :: t when verb = "bet" -> Bet (match_float f, t)
   | _ -> raise Malformed

@@ -42,19 +42,20 @@ type object_phrase = string list
     the word of a command, where a "word" is any sequence of non-space
     characters. No element of the list should have any space characters.
 
-    - If the user inputs ["calculate percentage MEM LAL PointsBet"], the
-      object_phrase will be [\"mem"; "lal"; "pointsbet"\]; ]*)
+    - If the user inputs ["calculate MEM LAL PointsBet"], the object_phrase will
+      be [\"mem"; "lal"; "pointsbet"\]; ]*)
 
 (**The type [command] represents the user's input that is decomposed into the
    verb, specifier, and object phrase. Inv: for Calculate and Print, any
    object_phrase cannot be empty.*)
 type command =
   | Calculate of object_phrase
+  | Bet of float * object_phrase
   | Print of format * object_phrase
-  | Arbitrage
+  | Arbitrage of float
   | Goto of league
   | Helpwith of help_category
-  | Underdog
+  | Riskiest
   | Closest
   | MatchupList
   | Help
@@ -64,14 +65,21 @@ type command =
 
 val parse : string -> command
 (** [parse str] parses the user's input into a [command]. The first word (i.e.
-    consecutive non-space group of characters) becomes the verb. The second word
-    becomes the specifier, which is either an [operation], for performing a
-    calculation, or a [format], for printing. For example:
+    consecutive non-space group of characters) becomes the command. For Print
+    only, the second word becomes the specifier, which is a [format] for
+    printing. The words following Print [format] and following a Calculate
+    command become stored as an [object phrase]. The words following the
+    commands Goto and Helpwith are interpreted to become their argument. The
+    valid arguments for these constructors are given in the REPL loop. Some
+    examples of valid parsing:
 
     - [parse "print american MEM LAL"] is
       [Print \[American, \["mem"; "lal"\]\]].
-    - [parse "calculate percentage MEM LAL PointsBet"] is
-      [Calculate \[Percentage, \["mem"; "lal"; "pointsbet"\]\]].
+    - [parse "calculate MEM LAL PointsBet"] is
+      [Calculate \["mem"; "lal"; "pointsbet"\]].
+    - [parse "gO tO NhL"] is [Goto NHL].
+    - [parse "HELP WITH odds"] is [Helpwith OddsFormatExpl]
+    - [parse "       home"] is [Home].
 
     Requires: [str] contains only alphanumeric (A-Z, a-z, 0-9) and space
     characters (only ASCII character code 32; not tabs or newlines, etc).
@@ -79,9 +87,9 @@ val parse : string -> command
     Raises: [Empty] if [str] is the empty string or only contains spaces.
 
     Raises: [Malformed] if the command is malformed. That can take any of the
-    following forms: The verb is not "calculate", "print", "home", "arbitrage",
-    "go to", "help", or "quit"; The verb is "quit", followed by a non-empty
-    tail; The verb is "home", followed by a non-empty tail; The verb is "print",
-    followed by a non-format specifier; The verb is "calculate", followed by a
-    non-operation specifier; The verb is either "print", "calculate",
-    "arbitrage", "go to", or "help" but has an empty tail. *)
+    following forms: The verb is not any of the valid constructors in the type
+    command; The verb is "quit", "underdog", "closest", "matchup list", "help",
+    "start", or "home" followed by a non-empty tail; The verb is "print",
+    followed by a non-format specifier; The verb is "bet" or "arbitrage"
+    followed by a non-float; The verb is either "print", "calculate", "bet", "go
+    to", or "help" but has an empty tail. *)

@@ -117,11 +117,7 @@ let conversion_ex () =
 
 let implied_prob_ex () =
   ANSITerminal.print_string [ on_black; white ] implied_prob_intro;
-
   ANSITerminal.print_string [ on_black; white ] implied_prob_am_expl;
-
   ANSITerminal.print_string [ on_black; green ] implied_prob_am_example;
-
   ANSITerminal.print_string [ on_black; white ] implied_prob_dec_expl;
-
   ANSITerminal.print_string [ on_black; green ] implied_prob_dec_example

@@ -19,7 +19,7 @@ val teams_printer : int * (string * string) -> unit
 
 val print_table : Translate.t -> unit
 (**[print_table t] prints all of the odds with associated matchups and betting
-   websites in t*)
+   websites in t.*)
 
 val calc_printer : Calc.t -> unit
 (**[calc_printer t] prints the results of a single calculation in [t] using
@@ -34,3 +34,8 @@ val print_matchup : Translate.t -> string -> string -> string list -> unit
 val print_matchup_lst : Translate.t -> string -> unit
 (**[print_matchup_lst t leag] prints all of the matchups in [leag] that are
    stored in [t].*)
+
+val arb_printer :
+  (Calc.t * Calc.t) list * (Calc.t * Calc.t * Calc.t) list -> unit
+(**[arb_printer t] prints the results of all of the calculations deemed to be
+   arbitrage-able, stored in [t]. Uses ANSITerminal.*)
