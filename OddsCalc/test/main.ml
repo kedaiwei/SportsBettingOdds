@@ -1,3 +1,31 @@
+(******************************************************************************
+  We elected to use OUnit mainly to test the backend systems that power our data
+  interpretation and REPL interface. So, in this test file we tested our
+  translate file and our Command file. For Translate, we created a number of
+  different JSON files. Each of these JSON files have different configurations
+  of possible games. For example, we created a JSON file with multiple games,
+  one with NONE in their odds, some with different sites, and some with
+  different Leagues. We created all the different possible combinations of
+  potential JSON's to ensure a thorough testing on all edge cases when
+  considering possible translations. For our Command file, we tested all the
+  different potential inputs a user can input. This included multiple spaces in
+  between the different key words, case insensitivity, and different mispelling
+  of words. We made sure to test all the different possible inputs a user can
+  put in to ensure that they all work. We wanted to interactively test the main
+  file because we wanted to simulate the user experience and ensure that it was
+  of the highest quality. By playing through it, we were able to improve how we
+  presented our menu (including font, highlights, order of options) in addition
+  to making sure all of the functionalities are in place. The Calc function will
+  also be tested interactively, because the only times that those functions are
+  called are directly followed by a call to print the data. So, we can quickly
+  debug something that would be impossible to write the expectation for (since
+  we would have to browse a several-thousand line json and find the maximum
+  manually, for example). We are confident that our tests comprehensively test
+  correctness of our system because our OUnit tests have been written to cover
+  all of the possible commands and jsons, and our interactive testing went over
+  every single branch in every menu.
+  ************************************************************************)
+
 open Yojson.Basic
 open Oddsmath
 open Oddsmath.Translate
@@ -15,7 +43,7 @@ let test_multGames =
   Yojson.Basic.from_file (data_dir_prefix ^ "test_multiple_games.json")
 
 let test_multGames_None =
-  Yojson.Basic.from_file (data_dir_prefix ^ "test_multiplegamesNone.json")
+  Yojson.Basic.from_file (data_dir_prefix ^ "test_multgamesNone.json")
 
 let test_multGames_ALLNone =
   Yojson.Basic.from_file (data_dir_prefix ^ "test_multgamesALLNone.json")
@@ -251,10 +279,10 @@ let translate_tests =
           odds =
             [
               (1, None);
-              (2, Some [ 165.0; 425.0; 370.0 ]);
-              (3, Some [ 170.0; 400.0; 370.0 ]);
-              (4, Some [ 170.0; 400.0; 370.0 ]);
-              (5, Some [ 170.0; 400.0; 370.0 ]);
+              (2, Some [ -165.0; 425.0; 370.0 ]);
+              (3, Some [ -170.0; 400.0; 370.0 ]);
+              (4, Some [ -170.0; 400.0; 370.0 ]);
+              (5, Some [ -170.0; 400.0; 370.0 ]);
             ];
         }
         (from_json test_multLeaguesNone) );
@@ -303,7 +331,7 @@ let translate_tests =
           site = [ (1, "games.com"); (2, "games.com"); (3, "games.com") ];
           odds =
             [
-              (1, Some [ -170.0; 400.0; 370.0 ]);
+              (1, Some [ -170.0; 400.0; 400.0 ]);
               (2, Some [ 1.0; -1.0; 1.0 ]);
               (3, None);
               (4, Some [ 7.0; -2.0; 4.0 ]);
@@ -373,47 +401,44 @@ let command_test =
     ( "trivial_calculate_test" >:: fun _ ->
       assert_equal
         (Calculate [ "mem"; "lal"; "pointsbet" ])
-        (parse "calculate percentage MEM LAL PointsBet") );
+        (parse "calculate MEM LAL PointsBet") );
     ( "calculateSpongebobMeme_test" >:: fun _ ->
       assert_equal
         (Calculate [ "mem"; "lal"; "pointsbet" ])
-        (parse "CaLcUlAtE percentage MEM LAL PointsBet") );
+        (parse "CaLcUlAtE  MEM LAL PointsBet") );
     ( "calculateUppercase_test" >:: fun _ ->
       assert_equal
         (Calculate [ "mem"; "lal"; "pointsbet" ])
-        (parse "Calculate percentage MEM LAL PointsBet") );
+        (parse "Calculate MEM LAL PointsBet") );
     ( "multspacesfirst_calculate_test" >:: fun _ ->
       assert_equal
         (Calculate [ "mem"; "lal"; "pointsbet" ])
-        (parse "calculate                      percentage MEM LAL PointsBet") );
+        (parse "calculate                      MEM LAL PointsBet") );
     ( "multspacesmiddle1_calculate_test" >:: fun _ ->
       assert_equal
         (Calculate [ "mem"; "lal"; "pointsbet" ])
-        (parse "calculate percentage                  MEM LAL PointsBet") );
+        (parse "calculate                  MEM LAL PointsBet") );
     ( "multspacesmiddle2_calculate_test" >:: fun _ ->
       assert_equal
         (Calculate [ "mem"; "lal"; "pointsbet" ])
-        (parse "calculate percentage MEM                      LAL PointsBet") );
+        (parse "calculate MEM                      LAL PointsBet") );
     ( "multspaceslast_calculate_test" >:: fun _ ->
       assert_equal
         (Calculate [ "mem"; "lal"; "pointsbet" ])
-        (parse "calculate percentage MEM LAL                        PointsBet")
-    );
+        (parse "calculate MEM LAL                        PointsBet") );
     ( "multspacesALL_calculate_test" >:: fun _ ->
       assert_equal
         (Calculate [ "mem"; "lal"; "pointsbet" ])
         (parse
-           "calculate                    percentage             MEM            \
+           "calculate                                MEM            \
             LAL           PointsBet") );
     ( "calculateempty_test" >:: fun _ ->
-      assert_raises Malformed (fun _ -> parse "Calculate Percentage ") );
+      assert_raises Malformed (fun _ -> parse "Calculate") );
     ( "calculateOnlySpaces_test" >:: fun _ ->
-      assert_raises Malformed (fun _ ->
-          parse "Calculate Percentage              ") );
+      assert_raises Malformed (fun _ -> parse "Calculate               ") );
     ("empty_test" >:: fun _ -> assert_raises Empty (fun () -> parse ""));
     ( "misspelled_calculate_test" >:: fun _ ->
-      assert_raises Malformed (fun () ->
-          parse "calculat percentage MEM LAL PointsBet") );
+      assert_raises Malformed (fun () -> parse "calculat MEM LAL PointsBet") );
     ( "misspelled_print_test" >:: fun _ ->
       assert_raises Malformed (fun () -> parse "prin american MEM LAL") );
     ( "missingverb_test" >:: fun _ ->
@@ -433,14 +458,16 @@ let command_test =
       assert_raises Malformed (fun _ -> parse "qui") );
     ("quitSpongebobMeme_test" >:: fun _ -> assert_equal Quit (parse "QuIt"));
     ( "arbitragespacesfirst_test" >:: fun _ ->
-      assert_equal Arbitrage (parse "          arbitrage") );
+      assert_equal (Arbitrage 100.) (parse "          arbitrage 100") );
     ( "arbitragespacesafter_test" >:: fun _ ->
-      assert_equal Arbitrage (parse "arbitrage              ") );
+      assert_equal (Arbitrage 100.) (parse "arbitrage 100              ") );
     ( "arbitragespacesboth_test" >:: fun _ ->
-      assert_equal Arbitrage (parse "          arbitrage              ") );
-    ("arbitrage_test" >:: fun _ -> assert_equal Arbitrage (parse "arbitrage"));
+      assert_equal (Arbitrage 100.)
+        (parse "          arbitrage            100  ") );
+    ( "arbitrage_test" >:: fun _ ->
+      assert_equal (Arbitrage 100.) (parse "arbitrage 100") );
     ( "arbitrageUppercase_test" >:: fun _ ->
-      assert_equal Arbitrage (parse "Arbitrage") );
+      assert_equal (Arbitrage 100.) (parse "Arbitrage 100") );
     ( "arbitragewithtail_test" >:: fun _ ->
       assert_raises Malformed (fun () -> parse "arbitrage hello") );
     ( "arbitragewithhead_test" >:: fun _ ->
@@ -448,7 +475,7 @@ let command_test =
     ( "arbitragemisspelled_test" >:: fun _ ->
       assert_raises Malformed (fun _ -> parse "arbitrag") );
     ( "arbitrageSpongebobMeme_test" >:: fun _ ->
-      assert_equal Arbitrage (parse "ArBiTrAgE") );
+      assert_equal (Arbitrage 100.) (parse "ArBiTrAgE 100") );
     ("start_test" >:: fun _ -> assert_equal Start (parse "start"));
     ( "startspacesfirst_test" >:: fun _ ->
       assert_equal Start (parse "          start") );
@@ -496,7 +523,7 @@ let command_test =
     ( "goto_BundesLiga_test" >:: fun _ ->
       assert_equal (Goto Bundesliga) (parse "go to Bundesliga") );
     ( "goto_BundesLiga_withspace_test" >:: fun _ ->
-      assert_raises Malformed (fun _ -> parse "go to Bundesliga") );
+      assert_raises Malformed (fun _ -> parse "go to Bundes liga") );
     ( "goto_championsleague_test" >:: fun _ ->
       assert_equal (Goto ChampionsLeague) (parse "go to Champions League") );
     ( "goto_BundesLiga_nospace_test" >:: fun _ ->
@@ -525,44 +552,50 @@ let command_test =
     ( "goto_General_test" >:: fun _ ->
       assert_equal (Goto General) (parse "go to General") );
     ( "trivial_help_test" >:: fun _ ->
-      assert_equal (Helpwith ArbitrageExpl) (parse "help arbitrage") );
+      assert_equal (Helpwith ArbitrageExpl) (parse "help with arbitrage") );
     ( "helpSpongebobMeme_test" >:: fun _ ->
-      assert_equal (Helpwith ArbitrageExpl) (parse "hElP arbitrage") );
+      assert_equal (Helpwith ArbitrageExpl) (parse "hElP wItH arbitrage") );
     ( "arbitrageSpongebobMeme_test" >:: fun _ ->
-      assert_equal (Helpwith ArbitrageExpl) (parse "help aRbItRaGe") );
+      assert_equal (Helpwith ArbitrageExpl) (parse "help WiTh aRbItRaGe") );
     ( "helpUppercase_test" >:: fun _ ->
-      assert_equal (Helpwith ArbitrageExpl) (parse "Help arbitrage") );
+      assert_equal (Helpwith ArbitrageExpl) (parse "Help With arbitrage") );
     ( "multspacesbefore_help_test" >:: fun _ ->
       assert_equal (Helpwith ArbitrageExpl)
-        (parse "                    help arbitrage") );
+        (parse "                    help with arbitrage") );
     ( "multspacesafter_help_test" >:: fun _ ->
       assert_equal (Helpwith ArbitrageExpl)
-        (parse "help                    arbitrage") );
+        (parse "help       with             arbitrage") );
     ( "trivial_format_help_test" >:: fun _ ->
-      assert_equal (Helpwith OddsFormatExpl) (parse "help odds format") );
+      assert_equal (Helpwith OddsFormatExpl) (parse "help with odds") );
     ( "formatSpongebobMeme_test" >:: fun _ ->
-      assert_equal (Helpwith OddsFormatExpl) (parse "help odds FoRmAt") );
+      assert_equal (Helpwith OddsFormatExpl) (parse "help with oDdS") );
     ( "formatUppercase_test" >:: fun _ ->
-      assert_equal (Helpwith OddsFormatExpl) (parse "help odds Format") );
+      assert_equal (Helpwith OddsFormatExpl) (parse "help With Odds") );
     ( "format_spacesAfter_test" >:: fun _ ->
       assert_equal (Helpwith OddsFormatExpl)
-        (parse "help odds format                ") );
+        (parse "help with odds                ") );
     ( "trivial_conv_help_test" >:: fun _ ->
-      assert_equal (Helpwith ConvExpl) (parse "help conversion") );
+      assert_equal (Helpwith ConvExpl) (parse "help with conversion") );
     ( "conversionSpongebobMeme_test" >:: fun _ ->
-      assert_equal (Helpwith ConvExpl) (parse "help CoNvErSiOn") );
+      assert_equal (Helpwith ConvExpl) (parse "help wItH CoNvErSiOn") );
     ( "conversionUppercase_test" >:: fun _ ->
-      assert_equal (Helpwith ConvExpl) (parse "help Conversion") );
+      assert_equal (Helpwith ConvExpl) (parse "help With Conversion") );
     ( "conversion_spacesAfter_test" >:: fun _ ->
-      assert_equal (Helpwith ConvExpl) (parse "help conversion                ")
-    );
+      assert_equal (Helpwith ConvExpl)
+        (parse "help with conversion                ") );
     ( "trivial_prob_help_test" >:: fun _ ->
-      assert_equal (Helpwith ProbabilityExpl) (parse "help probability") );
+      assert_equal (Helpwith ProbabilityExpl) (parse "help with probability") );
     ( "probabilitySpongebobMeme_test" >:: fun _ ->
-      assert_equal (Helpwith ProbabilityExpl) (parse "help PrObAbIliTy") );
+      assert_equal (Helpwith ProbabilityExpl) (parse "help wiTh PrObAbIliTy") );
     ( "probUppercase_test" >:: fun _ ->
-      assert_equal (Helpwith ProbabilityExpl) (parse "help Probability") );
+      assert_equal (Helpwith ProbabilityExpl) (parse "help With Probability") );
     ( "prob_spacesAfter_test" >:: fun _ ->
       assert_equal (Helpwith ProbabilityExpl)
-        (parse "help probability                ") );
+        (parse "help with probability                ") );
   ]
+
+let suite =
+  "test suite for sports betting"
+  >::: List.flatten [ translate_tests; command_test ]
+
+let _ = run_test_tt_main suite
