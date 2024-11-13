@@ -1,0 +1,18 @@
+{
+    "League": {
+        "1": "La Liga"
+    },
+    "Game": {
+        "1": "Barca vs Madrid"
+    },
+    "Site": {
+        "1": "games.com"
+    },
+    "Odds": {
+        "1": [
+            "",
+            "",
+            ""
+        ]
+    }
+}

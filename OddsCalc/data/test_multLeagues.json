@@ -1,0 +1,50 @@
+{
+    "League": {
+        "1": "La Liga",
+        "2": "La Liga",
+        "3": "La Liga",
+        "4": "Premier League",
+        "5": "Ligue One"
+    },
+    "Game": {
+        "1": "Barca vs Madrid",
+        "2": "Madrid vs Athletico",
+        "3": "Barca vs Athletico",
+        "4": "Chelsea vs NewCastle",
+        "5": "PSG vs Nice"
+    },
+    "Site": {
+        "1": "games.com",
+        "2": "games.com",
+        "3": "games.com",
+        "4": "games.com",
+        "5": "games.com"
+    },
+    "Odds": {
+        "1": [
+            "-182",
+            "+400",
+            "+320"
+        ],
+        "2": [
+            "-165",
+            "+425",
+            "+370"
+        ],
+        "3": [
+            "-170",
+            "+400",
+            "+370"
+        ],
+        "4": [
+            "-170",
+            "+400",
+            "+370"
+        ],
+        "5": [
+            "-170",
+            "+400",
+            "+370"
+        ]
+    }
+}

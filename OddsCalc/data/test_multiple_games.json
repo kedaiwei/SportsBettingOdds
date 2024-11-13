@@ -1,0 +1,34 @@
+{
+    "League": {
+        "1": "La Liga",
+        "2": "La Liga",
+        "3": "La Liga"
+    },
+    "Game": {
+        "1": "Barca vs Madrid",
+        "2": "Madrid vs Athletico",
+        "3": "Barca vs Athletico"
+    },
+    "Site": {
+        "1": "games.com",
+        "2": "games.com",
+        "3": "games.com"
+    },
+    "Odds": {
+        "1": [
+            "-182",
+            "+400",
+            "+320"
+        ],
+        "2": [
+            "-165",
+            "+425",
+            "+370"
+        ],
+        "3": [
+            "-170",
+            "+400",
+            "+370"
+        ]
+    }
+}
