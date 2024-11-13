@@ -23,11 +23,12 @@ git-repo: "https://github.coecis.cornell.edu/jc2565/cs3110-final-project/commits
 demo-video-url: ""
 # Write a short, attention-grabbing description of your project.
 desc: >
-  Our project seeks to query several sports betting websites and collect
-  information about pre-game odds, which will be synthesized to produce an
-  easily digestible table of helpful details for the user. The program would
-  ask which site the user would like to query, then output a nicely formatted
-  table including odds, chances of winning, and what the net gain/loss would be
-  if the user bet on each option.
+  Our project web scrapes a hub website for sports betting odds and collects
+  information about pre-game odds and live-game odds, which will be synthesized 
+  to be returned to the user at their request. The program involves a REPL loop 
+  that asks the user what league they would like to query, and offers several 
+  commands that the user can call such as finding the most contentious matchup 
+  based on odds. The interface features case-insensitive input parsing and can 
+  be easily expanded to add more features. 
 
   Starting the program will also remind the user to gamble responsibly.
