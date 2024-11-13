@@ -1,0 +1,10 @@
+1. Install python3 through https://www.python.org/downloads/
+2. Install requests using "pip install requests" in the terminal
+3. Install Beautifulsoup4 using "pip install beautifulsoup4" in the terminal  
+4. Install pandas using "pip install pandas" in the terminal
+https://pandas.pydata.org/docs/getting_started/install.html
+5. Install ANSITerminal by calling "opam install ansiterminal" in the terminal
+6. Install Yojson by calling "opam install yojson" in the terminal
+7. To run the program, change directory until you reach /OddsCalc
+8. In the terminal, call "dune build" to build the program
+9. In the terminal, call "make start" to execute the program
